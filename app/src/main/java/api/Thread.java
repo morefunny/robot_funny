@@ -1,5 +1,9 @@
 package api;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 /**
@@ -19,15 +23,41 @@ public class Thread {
     private int _commentCount;
     private String _createTime;
 
-    private ArrayList<ThreadData> _dataList;
+    private ArrayList<ThreadData> _contentList;
     private String _threadType;
 
-    public Thread() {
+    public Thread(JSONObject obj) throws JSONException {
+        _threadId = obj.getInt("ThreadId");
+        _categoryId = obj.getInt("CategoryId");
+        _topicId = obj.getInt("TopicId");
+        _userId = obj.getInt("UserId");
+        _threadStatus = obj.getString("ThreadStatus");
 
+        _upCount = obj.getInt("UpCount");
+        _downCount = obj.getInt("DownCount");
+        _commentCount = obj.getInt("CommentCount");
+        _createTime = obj.getString("CreateTime");
+        _threadType = obj.getString("ThreadType");
+
+        _contentList = new ArrayList<ThreadData>();
+        String content = obj.getString("Content");
+        JSONArray contentArr = new JSONArray(content);
+        for (int i = 0; i < contentArr.length(); i++) {
+            JSONObject nodeObj = contentArr.getJSONObject(i);
+
+            String data = nodeObj.getString("data");
+            String type = nodeObj.getString("type");
+            ThreadData threadData = new ThreadData(data, type);
+            _contentList.add(threadData);
+        }
     }
 
     public void setThreadId(int threadId) {
         _threadId = threadId;
+    }
+
+    public int getThreadId() {
+        return _threadId;
     }
 
     public void setCategoryId(int catId) {
@@ -36,5 +66,20 @@ public class Thread {
 
     public void setTopicId(int topicId) {
         _topicId = topicId;
+    }
+/*
+    public ArrayList<ThreadData> getContent() {
+        return _contentList;
+    }
+*/
+    public String getContent() {
+
+        StringBuilder content = new StringBuilder();
+        for(int i = 0; i < _contentList.size(); i++) {
+            if (_contentList.get(i).getDataType().equals("text")) {
+                content.append(_contentList.get(i).getData());
+            }
+        }
+        return content.toString();
     }
 }

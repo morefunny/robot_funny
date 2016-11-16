@@ -1,6 +1,13 @@
 package api;
 
+import android.util.Log;
+
 import com.loopj.android.http.AsyncHttpResponseHandler;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -14,14 +21,32 @@ public class RobotApi {
 
     }
 
-    public void GetJokeList(int userId, int catId, int limit, ReceiveThreadListHandler handler) {
+    public void GetJokeList(int userId, final int catId, int limit, final ReceiveThreadListHandler handler) {
 
         String url = String.format("/user/query?uid=%d&cat_id=%d&limit=%d", userId, catId, limit);
 
         RobotApiClient.get(url, new AsyncHttpResponseHandler() {
 
             public void  onSuccess(int statusCode, Header[] headers, byte[] responseBody){
+                String data = new String(responseBody);
+                Log.e("HEHE", data);
+                try {
+                    JSONObject respObject = new JSONObject(data);
+                    JSONObject dataObject = respObject.getJSONObject("data");
+                    JSONArray threadsArr = dataObject.getJSONArray("threads");
 
+                    ArrayList<Thread> threadList = new ArrayList<Thread>();
+                    for (int i = 0; i < threadsArr.length();i ++) {
+                        JSONObject threadObj = threadsArr.getJSONObject(i);
+                        Thread thread = new Thread(threadObj);
+
+                        threadList.add(thread);
+                    }
+
+                    handler.onReceiveThreadList(catId, threadList);
+                } catch (org.json.JSONException e) {
+                    Log.e("exception", e.getMessage());
+                }
             }
 
             @Override

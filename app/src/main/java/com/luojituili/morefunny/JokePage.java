@@ -15,6 +15,9 @@ import android.widget.ListView;
 
 public class JokePage extends Fragment {
 
+
+
+
     public JokePage() {
     }
 
@@ -22,6 +25,9 @@ public class JokePage extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.joke_page, container, false);
         ListView jokeList = (ListView) view.findViewById(R.id.joke_view);
+
+        JokeListAdapter adapter = new JokeListAdapter(JokePage.this.getContext());
+        jokeList.setAdapter(adapter);
         return view;
 
     }

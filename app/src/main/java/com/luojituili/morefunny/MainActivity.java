@@ -3,12 +3,17 @@ package com.luojituili.morefunny;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
+import api.Thread;
+
 public class MainActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener,
-        ViewPager.OnPageChangeListener {
+        ViewPager.OnPageChangeListener{
 
     //UI Objects
     private TextView txt_topbar;
@@ -35,6 +40,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         mAdapter = new FragmentAdapter(getSupportFragmentManager());
         bindViews();
         rb_channel.setChecked(true);
+
     }
 
     private void bindViews() {
@@ -51,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         vpager.setCurrentItem(0);
         vpager.addOnPageChangeListener(this);
     }
+
 
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
