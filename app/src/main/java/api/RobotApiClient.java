@@ -6,10 +6,15 @@ import com.loopj.android.http.*;
  */
 public class RobotApiClient {
 
-    private static final String BASE_URL = "http://api.twitter.com/1/";
+    private static final String BASE_URL = "http://120.55.166.52:12508";
     private static AsyncHttpClient client = new AsyncHttpClient();
 
     public static void get(String url, RequestParams params,  AsyncHttpResponseHandler responseHandler) {
+        client.get(getAbsoluteUrl(url), params, responseHandler);
+    }
+
+
+    public static void getJson(String url, RequestParams params,  JsonHttpResponseHandler responseHandler) {
         client.get(getAbsoluteUrl(url), params, responseHandler);
     }
 
