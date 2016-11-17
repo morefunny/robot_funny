@@ -52,6 +52,10 @@ public class Thread {
         }
     }
 
+    public boolean hasImage() {
+        return _threadType.equals("Pic");
+    }
+
     public void setThreadId(int threadId) {
         _threadId = threadId;
     }
@@ -67,11 +71,11 @@ public class Thread {
     public void setTopicId(int topicId) {
         _topicId = topicId;
     }
-/*
-    public ArrayList<ThreadData> getContent() {
+
+    public ArrayList<ThreadData> getContentList() {
         return _contentList;
     }
-*/
+
     public String getContent() {
 
         StringBuilder content = new StringBuilder();
