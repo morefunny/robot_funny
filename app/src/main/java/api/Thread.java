@@ -22,9 +22,17 @@ public class Thread {
     private int _downCount;
     private int _commentCount;
     private String _createTime;
+    private boolean _isNotify;
 
     private ArrayList<ThreadData> _contentList;
     private String _threadType;
+
+    public Thread(boolean isNotify, String content) {
+        _isNotify = isNotify;
+        ThreadData data = new ThreadData(content, "text");
+        _contentList = new ArrayList<ThreadData>();
+        _contentList.add(data);
+    }
 
     public Thread(JSONObject obj) throws JSONException {
         _threadId = obj.getInt("ThreadId");
@@ -50,6 +58,10 @@ public class Thread {
             ThreadData threadData = new ThreadData(data, type);
             _contentList.add(threadData);
         }
+    }
+
+    public  boolean isNotify () {
+        return _isNotify;
     }
 
     public boolean hasImage() {

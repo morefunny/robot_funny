@@ -16,6 +16,8 @@
     <color name="text_topbar">#694E42</color>
     <color name="div_white">#E5E5E5</color>
 
-
-
+    <color name="robot_gray">#ffe1e1e1</color>
+    <color name="robot_action_layout">#ffffff</color>
+    <color name="robot_action_text">#ff999999</color>
+    <color name="robot_refresh_text">#ff2a90d7</color>
 </resources>

@@ -38,7 +38,8 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initImageLoader(getApplicationContext());
+        //initImageLoader(getApplicationContext());
+
 
         mAdapter = new FragmentAdapter(getSupportFragmentManager());
         bindViews();

@@ -7,5 +7,5 @@ import java.util.ArrayList;
  */
 
 public interface ReceiveThreadListHandler {
-    void onReceiveThreadList(int catId, ArrayList<Thread> data);
+    void onReceiveThreadList(int code, int catId, ArrayList<Thread> data);
 }
