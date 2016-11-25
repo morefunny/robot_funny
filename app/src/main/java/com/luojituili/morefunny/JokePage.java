@@ -54,18 +54,26 @@ public class JokePage extends Fragment implements SwipeRefreshLayout.OnRefreshLi
         View view = inflater.inflate(R.layout.joke_page, container, false);
         _swipeLayout = (SwipeRefreshLayout)view.findViewById(R.id.refresh_layout);
         _swipeLayout.setOnRefreshListener(this);
-        _swipeLayout.setRefreshing(true);
+
 
         ListView jokeList = (ListView) view.findViewById(R.id.joke_view);
 
-        _adapter = new JokeListAdapter(JokePage.this.getContext());
+        _adapter = new JokeListAdapter(JokePage.this.getContext(), this, _swipeLayout, jokeList);
         jokeList.setAdapter(_adapter);
 
-        onRefresh();
+        onActive();
         return view;
     }
 
     public void onRefresh() {
         _robotApi.GetJokeList(1001, 206, 10, _handler);
+    }
+
+    public void onActive() {
+        if (_swipeLayout == null) {
+            return;
+        }
+        _swipeLayout.setRefreshing(true);
+        onRefresh();
     }
 }

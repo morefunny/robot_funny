@@ -19,10 +19,10 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     //UI Objects
     private TextView txt_topbar;
     private RadioGroup rg_tab_bar;
-    private RadioButton rb_channel;
-    private RadioButton rb_message;
-    private RadioButton rb_better;
-    private RadioButton rb_setting;
+    private RadioButton robot_rb_home;
+    private RadioButton robot_rb_gif;
+    private RadioButton robot_rb_favorite;
+    private RadioButton robot_rb_setting;
     private ViewPager vpager;
 
     private FragmentAdapter mAdapter;
@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
 
         mAdapter = new FragmentAdapter(getSupportFragmentManager());
         bindViews();
-        rb_channel.setChecked(true);
+        robot_rb_home.setChecked(true);
 
     }
 
@@ -65,10 +65,10 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     private void bindViews() {
         txt_topbar = (TextView) findViewById(R.id.txt_topbar);
         rg_tab_bar = (RadioGroup) findViewById(R.id.rg_tab_bar);
-        rb_channel = (RadioButton) findViewById(R.id.rb_channel);
-        rb_message = (RadioButton) findViewById(R.id.rb_message);
-        rb_better = (RadioButton) findViewById(R.id.rb_better);
-        rb_setting = (RadioButton) findViewById(R.id.rb_setting);
+        robot_rb_home = (RadioButton) findViewById(R.id.robot_rb_home);
+        robot_rb_gif = (RadioButton) findViewById(R.id.robot_rb_gif);
+        robot_rb_favorite = (RadioButton) findViewById(R.id.robot_rb_favorite);
+        robot_rb_setting = (RadioButton) findViewById(R.id.robot_rb_setting);
         rg_tab_bar.setOnCheckedChangeListener(this);
 
         vpager = (ViewPager) findViewById(R.id.vpager);
@@ -77,20 +77,19 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         vpager.addOnPageChangeListener(this);
     }
 
-
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
         switch (checkedId) {
-            case R.id.rb_channel:
+            case R.id.robot_rb_home:
                 vpager.setCurrentItem(PAGE_ONE);
                 break;
-            case R.id.rb_message:
+            case R.id.robot_rb_gif:
                 vpager.setCurrentItem(PAGE_TWO);
                 break;
-            case R.id.rb_better:
+            case R.id.robot_rb_favorite:
                 vpager.setCurrentItem(PAGE_THREE);
                 break;
-            case R.id.rb_setting:
+            case R.id.robot_rb_setting:
                 vpager.setCurrentItem(PAGE_FOUR);
                 break;
         }
@@ -112,16 +111,16 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         if (state == 2) {
             switch (vpager.getCurrentItem()) {
                 case PAGE_ONE:
-                    rb_channel.setChecked(true);
+                    robot_rb_home.setChecked(true);
                     break;
                 case PAGE_TWO:
-                    rb_message.setChecked(true);
+                    robot_rb_gif.setChecked(true);
                     break;
                 case PAGE_THREE:
-                    rb_better.setChecked(true);
+                    robot_rb_favorite.setChecked(true);
                     break;
                 case PAGE_FOUR:
-                    rb_setting.setChecked(true);
+                    robot_rb_setting.setChecked(true);
                     break;
             }
         }

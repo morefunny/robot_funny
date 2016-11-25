@@ -98,4 +98,16 @@ public class Thread {
         }
         return content.toString();
     }
+
+    public String getUpCount() {
+        return String.format("%d", _upCount);
+    }
+
+    public String getDownCount() {
+        return String.format("%d", _downCount);
+    }
+
+    public String getCommentCount() {
+        return String.format("%d", _commentCount);
+    }
 }

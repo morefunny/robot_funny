@@ -1,6 +1,7 @@
 package com.luojituili.morefunny;
 
 import android.content.Context;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,6 +9,7 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -29,14 +31,23 @@ public class JokeListAdapter extends BaseAdapter {
     private static final int TYPE_JOKE_IMAGE = 1;
     private static final int TYPE_JOKE_NOTIFY = 2;
     private Context mContext;
+    private SwipeRefreshLayout.OnRefreshListener _swipeListener;
+
+    private SwipeRefreshLayout _swipeLayout;
+    private ListView _listview;
     private ArrayList<Thread> _threadList = new ArrayList<Thread>();
 
-    public JokeListAdapter(Context mContext) {
+    public JokeListAdapter(Context mContext, SwipeRefreshLayout.OnRefreshListener _swipeListener,
+                           SwipeRefreshLayout swipeLayout, ListView listview) {
+
+        this._swipeListener = _swipeListener;
+        this._swipeLayout = swipeLayout;
         this.mContext = mContext;
+        this._listview = listview;
     }
 
     public void appendThreadList(ArrayList<Thread> threadList) {
-        Thread endNotify = new Thread(true, "上次看到这，点击刷新");
+        Thread endNotify = new Thread(true, "刚刚看到这里，点击刷新");
         //Thread startNotify = new Thread(true, "本次更新了10个内容");
         //threadList.add(0, startNotify);
         threadList.add(endNotify);
@@ -44,6 +55,8 @@ public class JokeListAdapter extends BaseAdapter {
         _threadList.addAll(0, threadList);
         notifyDataSetChanged();
     }
+
+
     @Override
     public int getCount() {
         return _threadList.size();
@@ -86,6 +99,9 @@ public class JokeListAdapter extends BaseAdapter {
             holder = new ViewHolderImageItem();
             holder.imageView = (ImageView) convertView.findViewById(R.id.imageView);
             holder.txtContent = (TextView) convertView.findViewById(R.id.txt_content);
+            holder.summery.txtUp = (TextView)convertView.findViewById(R.id.robot_digg);
+            holder.summery.txtDown = (TextView)convertView.findViewById(R.id.robot_bury);
+            holder.summery.txtComment = (TextView)convertView.findViewById(R.id.robot_comment_count);
 
             WindowManager wm = (WindowManager)parent.getContext().getSystemService(Context.WINDOW_SERVICE);
             int width = wm.getDefaultDisplay().getWidth();
@@ -107,9 +123,12 @@ public class JokeListAdapter extends BaseAdapter {
             holder = (ViewHolderImageItem) convertView.getTag();
         }
         // holder.img_icon.setImageResource(mData.get(position).getImgId());
-        holder.txtContent.setText(_threadList.get(position).getContent());
-
         Thread thread = _threadList.get(position);
+        holder.txtContent.setText(_threadList.get(position).getContent());
+        holder.summery.txtUp.setText(thread.getUpCount());
+        holder.summery.txtComment.setText(thread.getCommentCount());
+        holder.summery.txtDown.setText(thread.getDownCount());
+        
         if (thread.hasImage()) {
             Log.e("hasimage", "Yes");
             ArrayList<ThreadData> contentList = thread.getContentList();
@@ -143,17 +162,27 @@ public class JokeListAdapter extends BaseAdapter {
             holder = new ViewHolderTextItem();
             holder.txtContent = (TextView) convertView.findViewById(R.id.robot_list_item_txt_content);
 
+            holder.summery.txtUp = (TextView)convertView.findViewById(R.id.robot_digg);
+            holder.summery.txtDown = (TextView)convertView.findViewById(R.id.robot_bury);
+            holder.summery.txtComment = (TextView)convertView.findViewById(R.id.robot_comment_count);
+
             convertView.setTag(holder);
         }else{
             holder = (ViewHolderTextItem) convertView.getTag();
         }
+
+        Thread thread = _threadList.get(position);
+        holder.summery.txtUp.setText(thread.getUpCount());
+        holder.summery.txtComment.setText(thread.getCommentCount());
+        holder.summery.txtDown.setText(thread.getDownCount());
+
         // holder.img_icon.setImageResource(mData.get(position).getImgId());
-        holder.txtContent.setText(_threadList.get(position).getContent());
+        holder.txtContent.setText(thread.getContent());
         return convertView;
     }
 
 
-    private View getNotifyView(int position, View convertView, ViewGroup parent) {
+    private View getNotifyView(final int position, View convertView, ViewGroup parent) {
 
         ViewHolderTextItem holder = null;
         if(convertView == null){
@@ -166,7 +195,28 @@ public class JokeListAdapter extends BaseAdapter {
             holder = (ViewHolderTextItem) convertView.getTag();
         }
         // holder.img_icon.setImageResource(mData.get(position).getImgId());
+        holder.txtContent.setTag(new Integer(position));
         holder.txtContent.setText(_threadList.get(position).getContent());
+        holder.txtContent.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                Log.e("notify click", "onClick");
+                _listview.setSelection(0);
+                Integer pos = (Integer) v.getTag();
+                if (pos.intValue() < _threadList.size()) {
+                    _threadList.remove(pos.intValue());
+                }
+
+                _swipeLayout.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        _swipeLayout.setRefreshing(true);
+                    }
+                });
+
+                _swipeListener.onRefresh();
+            }
+        });
         return convertView;
     }
 
@@ -191,12 +241,21 @@ public class JokeListAdapter extends BaseAdapter {
         return convertView;
     }
 
+    private class ViewHolderSummery {
+        TextView txtUp;
+        TextView txtDown;
+        TextView txtComment;
+    }
+
     private class ViewHolderImageItem{
         ImageView imageView;
         TextView txtContent;
+
+        ViewHolderSummery summery = new ViewHolderSummery();
     }
 
     private class ViewHolderTextItem {
         TextView txtContent;
+        ViewHolderSummery summery = new ViewHolderSummery();
     }
 }

@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
+    android:background="@color/robot_gray"
     android:orientation="vertical">
 
     <TextView
@@ -11,9 +12,10 @@
         android:layout_height="wrap_content"
         android:text="《第一行代码Android》"
         android:gravity="center"
-        android:padding="16dp"
-        android:background="@color/text_yellow"
+        android:padding="8dp"
+        android:backgroundTint="@color/bg_gray"
+        android:clickable="true"
+        android:background="@color/robot_gray"
         android:textColor="@color/robot_refresh_text"
-        android:lineSpacingMultiplier="1.5"
-        android:textSize="12sp" />
+        android:textSize="16sp" />
 </LinearLayout>
