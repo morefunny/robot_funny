@@ -13,17 +13,17 @@ public class FragmentAdapter extends FragmentPagerAdapter {
 
     private final int PAGER_COUNT = 4;
     private JokePage jokePage = null;
-    private TextPage textPage = null;
-    private PicturePage picPage = null;
-    private DiscoveryPage disPage = null;
+    private JokePage textPage = null;
+    private JokePage picPage = null;
+    private JokePage disPage = null;
 
 
     public FragmentAdapter(FragmentManager fm) {
         super(fm);
         jokePage = new JokePage();
-        textPage = new TextPage();
-        picPage = new PicturePage();
-        disPage = new DiscoveryPage();
+        textPage = new JokePage();
+        picPage = new JokePage();
+        disPage = new JokePage();
     }
 
 

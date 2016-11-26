@@ -23,6 +23,7 @@ public class Thread {
     private int _commentCount;
     private String _createTime;
     private boolean _isNotify;
+    private int MaxNumberFormat = 10000;
 
     private ArrayList<ThreadData> _contentList;
     private String _threadType;
@@ -100,14 +101,31 @@ public class Thread {
     }
 
     public String getUpCount() {
-        return String.format("%d", _upCount);
+        _upCount = 18300;
+        if (_upCount < MaxNumberFormat) {
+            return String.format("%d", _upCount);
+        }
+
+        return String.format("%.2f万", _upCount*1.0f/10000);
     }
 
     public String getDownCount() {
-        return String.format("%d", _downCount);
+
+        _downCount = 883292;
+        if (_downCount < MaxNumberFormat) {
+            return String.format("%d", _downCount);
+        }
+
+        return String.format("%.2f万", _downCount*1.0f/10000);
     }
 
     public String getCommentCount() {
-        return String.format("%d", _commentCount);
+
+        _commentCount = 3892822;
+        if (_commentCount < MaxNumberFormat) {
+            return String.format("%d", _commentCount);
+        }
+
+        return String.format("%.2f万", _commentCount*1.0f/10000);
     }
 }

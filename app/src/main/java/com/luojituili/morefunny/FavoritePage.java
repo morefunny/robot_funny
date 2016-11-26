@@ -9,13 +9,14 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 /**
- * Created by sherlockhua on 2016/10/30.
+ * Created by sherlockhua on 2016/11/26.
  */
 
-public class PicturePage extends Fragment {
+public class FavoritePage extends Fragment {
 
 
-    public PicturePage() {
+    public FavoritePage() {
+
     }
 
     @Override
