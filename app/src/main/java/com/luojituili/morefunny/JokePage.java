@@ -79,8 +79,28 @@ public class JokePage extends Fragment implements SwipeRefreshLayout.OnRefreshLi
         _adapter = new JokeListAdapter(JokePage.this.getContext(), this, _swipeLayout, jokeList);
         jokeList.setAdapter(_adapter);
 
-        //loadData();
         return view;
+    }
+
+    @Override
+    public void setUserVisibleHint(boolean isVisibleToUser) {
+        super.setUserVisibleHint(isVisibleToUser);
+        if (isVisibleToUser) {
+            loadData();
+        }
+    }
+
+    @Override
+    public  void onResume() {
+        Log.e("jokepage", "resume");
+        //loadData();
+        super.onResume();
+    }
+
+    @Override
+    public void onStop() {
+        Log.e("jokepage", "stop");
+        super.onStop();
     }
 
     public void onRefresh() {
@@ -92,7 +112,13 @@ public class JokePage extends Fragment implements SwipeRefreshLayout.OnRefreshLi
             return;
         }
 
-        _swipeLayout.setRefreshing(true);
+        _swipeLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                _swipeLayout.setRefreshing(true);
+            }
+        });
+
         onRefresh();
     }
 }

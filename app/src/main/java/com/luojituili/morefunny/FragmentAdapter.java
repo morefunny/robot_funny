@@ -73,6 +73,6 @@ public class FragmentAdapter extends FragmentPagerAdapter {
             return jokePage;
         }
 
-        return _jokePageList.get(position);
+        return  _jokePageList.get(position);
     }
 }

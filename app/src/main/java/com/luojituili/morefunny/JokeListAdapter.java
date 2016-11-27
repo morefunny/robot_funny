@@ -49,6 +49,14 @@ public class JokeListAdapter extends BaseAdapter {
         this._listview = listview;
     }
 
+    private void toast(String text) {
+
+        Toast toast = Toast.makeText(mContext, text, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+        return;
+    }
+
     public void appendThreadList(ArrayList<Thread> threadList) {
 
         if (_notifyPositionList.size() > 0) {
@@ -72,17 +80,11 @@ public class JokeListAdapter extends BaseAdapter {
         }
 
         if (threadList.size() == 0) {
-            Toast toast = Toast.makeText(_listview.getContext(), "没有发现新内容，休息一下吧！", Toast.LENGTH_SHORT);
-            toast.setGravity(Gravity.CENTER, 0, 0);
-            toast.show();
+            this.toast("没有发现新内容，休息一下吧！");
             return;
         }
 
-        Toast toast = Toast.makeText(_listview.getContext(), String.format("本次更新了%d个内容", threadList.size()),
-                Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
-
+        this.toast(String.format("本次更新了%d个内容", threadList.size()));
         Thread endNotify = new Thread(true, "上次看到这里，点击刷新");
         threadList.add(endNotify);
 
