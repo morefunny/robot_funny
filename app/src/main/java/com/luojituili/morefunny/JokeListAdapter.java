@@ -3,6 +3,7 @@ package com.luojituili.morefunny;
 import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -36,6 +38,7 @@ public class JokeListAdapter extends BaseAdapter {
     private SwipeRefreshLayout _swipeLayout;
     private ListView _listview;
     private ArrayList<Thread> _threadList = new ArrayList<Thread>();
+    private ArrayList<Integer> _notifyPositionList = new ArrayList<Integer>();
 
     public JokeListAdapter(Context mContext, SwipeRefreshLayout.OnRefreshListener _swipeListener,
                            SwipeRefreshLayout swipeLayout, ListView listview) {
@@ -47,11 +50,43 @@ public class JokeListAdapter extends BaseAdapter {
     }
 
     public void appendThreadList(ArrayList<Thread> threadList) {
-        Thread endNotify = new Thread(true, "刚刚看到这里，点击刷新");
-        //Thread startNotify = new Thread(true, "本次更新了10个内容");
-        //threadList.add(0, startNotify);
+
+        if (_notifyPositionList.size() > 0) {
+            for (int i = 0; i < _notifyPositionList.size(); i++) {
+                int index = _notifyPositionList.get(i).intValue();
+                if (index >=0 && index <_threadList.size()) {
+                    for (int j = index - 5; j < index + 5; j++) {
+                        if (j < 0 || j >= _threadList.size()) {
+                            continue;
+                        }
+                        Thread thread = _threadList.get(j);
+                        if (thread.isNotify() == false) {
+                            continue;
+                        }
+
+                        _threadList.remove(j);
+                    }
+                }
+            }
+            _notifyPositionList.clear();
+        }
+
+        if (threadList.size() == 0) {
+            Toast toast = Toast.makeText(_listview.getContext(), "没有发现新内容，休息一下吧！", Toast.LENGTH_SHORT);
+            toast.setGravity(Gravity.CENTER, 0, 0);
+            toast.show();
+            return;
+        }
+
+        Toast toast = Toast.makeText(_listview.getContext(), String.format("本次更新了%d个内容", threadList.size()),
+                Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+
+        Thread endNotify = new Thread(true, "上次看到这里，点击刷新");
         threadList.add(endNotify);
 
+        _notifyPositionList.add(new Integer(threadList.size())-1);
         _threadList.addAll(0, threadList);
         notifyDataSetChanged();
     }

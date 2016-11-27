@@ -20,16 +20,9 @@ public class FragmentAdapter extends FragmentPagerAdapter {
 
     private final int PAGER_COUNT = 4;
     private JokePage jokePage = null;
-    private JokePage textPage = null;
-    private JokePage picPage = null;
-    private JokePage disPage = null;
 
     private ArrayList<JokePage> _jokePageList = new ArrayList<JokePage>();
     private RobotApi _robotApi = new RobotApi();
-
-    private final String[] TITLES = {"推荐", "笑话", "段子", "图片", "美女", "推理",
-            "Top New Free", "Trending"};
-
 
     private ReceiveCategoryHandler _handler = new ReceiveCategoryHandler() {
         public void onReceiveCategoryList(int code, ArrayList<RCategory> data){
@@ -45,25 +38,14 @@ public class FragmentAdapter extends FragmentPagerAdapter {
                 _jokePageList.add(jokePage);
                 notifyDataSetChanged();
             }
-
-            if (code == 200) {
-                //_adapter.appendThreadList(data);
-            }
-
-            //_swipeLayout.setRefreshing(false);
         }
     };
 
     public FragmentAdapter(FragmentManager fm) {
         super(fm);
         jokePage = new JokePage();
-        textPage = new JokePage();
-        picPage = new JokePage();
-        disPage = new JokePage();
-
         _robotApi.getCategory(_handler);
     }
-
 
     @Override
     public int getCount() {
@@ -90,24 +72,7 @@ public class FragmentAdapter extends FragmentPagerAdapter {
         if (_jokePageList.size() == 0) {
             return jokePage;
         }
-        Fragment fragment = _jokePageList.get(position);
-        /*
-        switch (position) {
-            case 0:
-                fragment = jokePage;
-                break;
-            case 1:
-                fragment = textPage;
-                break;
-            case 2:
-                fragment = picPage;
-                break;
-            case 3:
-                fragment = disPage;
-                break;
-        }*/
-        return fragment;
+
+        return _jokePageList.get(position);
     }
-
-
 }
