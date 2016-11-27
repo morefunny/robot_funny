@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     private FragmentManager fManager;
 
     private RobotHomepage _robotHomePage;
-    private RobotHomepage _robotGifPage;
+    private JokePage _robotGifPage;
     private FavoritePage _robotFavoritePage;
     private SettingPage _robotSettingPage;
 
@@ -64,7 +64,7 @@ public void onCheckedChanged(RadioGroup group, int checkedId) {
             break;
         case R.id.robot_rb_gif:
             if(_robotGifPage == null){
-                _robotGifPage = new RobotHomepage();
+                _robotGifPage = new JokePage();
                 fTransaction.add(R.id.robot_bottom_page,_robotGifPage);
             }else{
                 fTransaction.show(_robotGifPage);

@@ -86,14 +86,13 @@ public class JokePage extends Fragment implements SwipeRefreshLayout.OnRefreshLi
     public void setUserVisibleHint(boolean isVisibleToUser) {
         super.setUserVisibleHint(isVisibleToUser);
         if (isVisibleToUser) {
-            loadData();
+            //loadData();
         }
     }
 
     @Override
     public  void onResume() {
         Log.e("jokepage", "resume");
-        //loadData();
         super.onResume();
     }
 

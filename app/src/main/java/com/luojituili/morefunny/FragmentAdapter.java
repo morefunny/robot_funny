@@ -36,6 +36,9 @@ public class FragmentAdapter extends FragmentPagerAdapter {
                 jokePage.setCategoryId(cat.GetCategoryId());
                 jokePage.setCategoryName(cat.GetCategoryName());
                 _jokePageList.add(jokePage);
+            }
+
+            if (data.size() > 0) {
                 notifyDataSetChanged();
             }
         }
