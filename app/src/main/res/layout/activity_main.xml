@@ -7,7 +7,7 @@
     tools:context=".MainActivity">
 
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/ly_top_bar"
@@ -15,13 +15,13 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         tools:context=".MainActivity">
-<!--
+
         <com.astuetz.PagerSlidingTabStrip
             android:id="@+id/robot_top_menu"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary" />-->
-    </LinearLayout>
+            android:background="?attr/colorPrimary" />
+    </LinearLayout>-->
 
     <RadioGroup
         android:id="@+id/rg_tab_bar"
@@ -60,21 +60,17 @@
     <View
         android:id="@+id/div_tab_bar"
         android:layout_width="match_parent"
-        android:layout_height="2px"
+        android:layout_height="2dp"
         android:layout_above="@id/rg_tab_bar"
         android:background="@color/div_white" />
-<!--
-    <android.support.v4.view.ViewPager
-        android:id="@+id/vpager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/div_tab_bar"
-        android:layout_below="@id/ly_top_bar"></android.support.v4.view.ViewPager>-->
+
     <FrameLayout
         android:id="@+id/robot_bottom_page"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/div_tab_bar"
-        android:layout_below="@id/ly_top_bar"></FrameLayout>
+        android:layout_alignParentTop="true">
+
+    </FrameLayout>
 
 </RelativeLayout>

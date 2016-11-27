@@ -3,7 +3,14 @@ package com.luojituili.morefunny;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.util.Log;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
+
+import api.RCategory;
+import api.ReceiveCategoryHandler;
+import api.RobotApi;
 
 /**
  * Created by sherlockhua on 2016/10/30.
@@ -17,6 +24,35 @@ public class FragmentAdapter extends FragmentPagerAdapter {
     private JokePage picPage = null;
     private JokePage disPage = null;
 
+    private ArrayList<JokePage> _jokePageList = new ArrayList<JokePage>();
+    private RobotApi _robotApi = new RobotApi();
+
+    private final String[] TITLES = {"推荐", "笑话", "段子", "图片", "美女", "推理",
+            "Top New Free", "Trending"};
+
+
+    private ReceiveCategoryHandler _handler = new ReceiveCategoryHandler() {
+        public void onReceiveCategoryList(int code, ArrayList<RCategory> data){
+
+            Log.e("code", String.format("%d", code));
+            Log.e("count", String.format("%d", data.size()));
+            for (int i = 0; i< data.size(); i++) {
+                RCategory cat = data.get(i);
+                Log.e("categoryId", String.format("%d", cat.GetCategoryId()));
+                JokePage jokePage = new JokePage();
+                jokePage.setCategoryId(cat.GetCategoryId());
+                jokePage.setCategoryName(cat.GetCategoryName());
+                _jokePageList.add(jokePage);
+                notifyDataSetChanged();
+            }
+
+            if (code == 200) {
+                //_adapter.appendThreadList(data);
+            }
+
+            //_swipeLayout.setRefreshing(false);
+        }
+    };
 
     public FragmentAdapter(FragmentManager fm) {
         super(fm);
@@ -24,14 +60,20 @@ public class FragmentAdapter extends FragmentPagerAdapter {
         textPage = new JokePage();
         picPage = new JokePage();
         disPage = new JokePage();
+
+        _robotApi.getCategory(_handler);
     }
 
 
     @Override
     public int getCount() {
-        return PAGER_COUNT;
+        return _jokePageList.size();
     }
 
+    @Override
+    public CharSequence getPageTitle(int position) {
+        return _jokePageList.get(position).getCategoryName();
+    }
     @Override
     public Object instantiateItem(ViewGroup vg, int position) {
         return super.instantiateItem(vg, position);
@@ -45,21 +87,25 @@ public class FragmentAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        Fragment fragment = null;
+        if (_jokePageList.size() == 0) {
+            return jokePage;
+        }
+        Fragment fragment = _jokePageList.get(position);
+        /*
         switch (position) {
-            case MainActivity.PAGE_ONE:
+            case 0:
                 fragment = jokePage;
                 break;
-            case MainActivity.PAGE_TWO:
+            case 1:
                 fragment = textPage;
                 break;
-            case MainActivity.PAGE_THREE:
+            case 2:
                 fragment = picPage;
                 break;
-            case MainActivity.PAGE_FOUR:
+            case 3:
                 fragment = disPage;
                 break;
-        }
+        }*/
         return fragment;
     }
 

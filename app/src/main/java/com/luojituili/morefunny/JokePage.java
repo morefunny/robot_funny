@@ -26,9 +26,28 @@ public class JokePage extends Fragment implements SwipeRefreshLayout.OnRefreshLi
 
     private SwipeRefreshLayout _swipeLayout;
     private JokeListAdapter _adapter;
+    private String _categoryName;
+    private int _categoryId;
     private RobotApi _robotApi = new RobotApi();
 
     public JokePage() {
+    }
+
+    public void setCategoryId(int categoryId) {
+        _categoryId = categoryId;
+    }
+
+    public void setCategoryName(String name) {
+        _categoryName = name;
+    }
+
+    public String getCategoryName() {
+
+        return _categoryName;
+    }
+
+    public int getCategoryId() {
+        return _categoryId;
     }
 
 
@@ -66,7 +85,7 @@ public class JokePage extends Fragment implements SwipeRefreshLayout.OnRefreshLi
     }
 
     public void onRefresh() {
-        _robotApi.GetJokeList(1001, 206, 10, _handler);
+        _robotApi.getJokeList(1001, _categoryId, 10, _handler);
     }
 
     public void onActive() {
