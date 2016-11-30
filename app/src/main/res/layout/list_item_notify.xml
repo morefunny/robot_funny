@@ -13,9 +13,9 @@
         android:text="《第一行代码Android》"
         android:gravity="center"
         android:padding="8dp"
-        android:backgroundTint="@color/bg_gray"
+        android:backgroundTint="@color/bg_topbar"
         android:clickable="true"
-        android:background="@color/robot_gray"
+        android:background="@color/bg_topbar"
         android:textColor="@color/robot_refresh_text"
         android:textSize="16sp" />
 </LinearLayout>

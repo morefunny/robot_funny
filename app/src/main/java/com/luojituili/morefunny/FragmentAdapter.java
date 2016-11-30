@@ -9,8 +9,6 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 
 import api.RCategory;
-import api.ReceiveCategoryHandler;
-import api.RobotApi;
 
 /**
  * Created by sherlockhua on 2016/10/30.
@@ -19,35 +17,43 @@ import api.RobotApi;
 public class FragmentAdapter extends FragmentPagerAdapter {
 
     private final int PAGER_COUNT = 4;
-    private JokePage jokePage = null;
 
     private ArrayList<JokePage> _jokePageList = new ArrayList<JokePage>();
-    private RobotApi _robotApi = new RobotApi();
 
-    private ReceiveCategoryHandler _handler = new ReceiveCategoryHandler() {
-        public void onReceiveCategoryList(int code, ArrayList<RCategory> data){
 
-            Log.e("code", String.format("%d", code));
-            Log.e("count", String.format("%d", data.size()));
-            for (int i = 0; i< data.size(); i++) {
-                RCategory cat = data.get(i);
-                Log.e("categoryId", String.format("%d", cat.GetCategoryId()));
-                JokePage jokePage = new JokePage();
-                jokePage.setCategoryId(cat.GetCategoryId());
-                jokePage.setCategoryName(cat.GetCategoryName());
-                _jokePageList.add(jokePage);
-            }
+    public void setCategory(ArrayList<RCategory> data){
 
-            if (data.size() > 0) {
-                notifyDataSetChanged();
-            }
+        Log.e("count", String.format("%d", data.size()));
+        if (data.size() == 0) {
+            return;
         }
-    };
+
+        _jokePageList.clear();
+        for (int i = 0; i< data.size(); i++) {
+            RCategory cat = data.get(i);
+            Log.e("categoryId", String.format("%d", cat.GetCategoryId()));
+            JokePage jokePage = new JokePage();
+            jokePage.setCategoryId(cat.GetCategoryId());
+            jokePage.setCategoryName(cat.GetCategoryName());
+            _jokePageList.add(jokePage);
+        }
+
+        notifyDataSetChanged();
+    }
+
+    //本地默认的类别列表
+    private void initDefaultCategory() {
+
+        JokePage jokePage = new JokePage();
+        jokePage.setCategoryId(0);
+        jokePage.setCategoryName("推荐");
+        _jokePageList.add(jokePage);
+    }
 
     public FragmentAdapter(FragmentManager fm) {
+
         super(fm);
-        jokePage = new JokePage();
-        _robotApi.getCategory(_handler);
+        initDefaultCategory();
     }
 
     @Override
@@ -72,10 +78,6 @@ public class FragmentAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        if (_jokePageList.size() == 0) {
-            return jokePage;
-        }
-
         return  _jokePageList.get(position);
     }
 }

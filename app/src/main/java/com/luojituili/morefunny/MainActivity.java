@@ -7,6 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import java.io.File;
+import java.io.IOException;
+
 public class MainActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener{
 
     //UI Objects
@@ -36,6 +39,20 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         bindViews();
         robot_rb_home.setChecked(true);
 
+        initCache();
+    }
+
+    private void initCache() {
+
+        File dir = Util.getDiskCacheDir(this.getApplicationContext(), "thread");
+        int version = Util.getAppVersion(this.getApplicationContext());
+
+        try {
+            SimpleDiskCache cache = SimpleDiskCache.open(this.getString(R.string.text_cache),
+                    dir, version, 64 * 1024 * 1024);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void bindViews() {
@@ -56,6 +73,7 @@ public void onCheckedChanged(RadioGroup group, int checkedId) {
         case R.id.robot_rb_home:
             if(_robotHomePage == null){
                 _robotHomePage = new RobotHomepage();
+                _robotHomePage.setCategoryType(this.getString(R.string.category_type_static));
                 _robotHomePage.setManager(fManager);
                 fTransaction.add(R.id.robot_bottom_page, _robotHomePage);
             }else{

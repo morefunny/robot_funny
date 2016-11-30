@@ -3,7 +3,6 @@ package com.luojituili.morefunny;
 import android.content.Context;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +11,6 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -49,15 +47,13 @@ public class JokeListAdapter extends BaseAdapter {
         this._listview = listview;
     }
 
-    private void toast(String text) {
+    public void appendThreadList(ArrayList<Thread> threadList) {
 
-        Toast toast = Toast.makeText(mContext, text, Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
-        return;
+        _threadList.addAll(threadList);
+        notifyDataSetChanged();
     }
 
-    public void appendThreadList(ArrayList<Thread> threadList) {
+    public void addThreadList(ArrayList<Thread> threadList) {
 
         if (_notifyPositionList.size() > 0) {
             for (int i = 0; i < _notifyPositionList.size(); i++) {
@@ -80,11 +76,9 @@ public class JokeListAdapter extends BaseAdapter {
         }
 
         if (threadList.size() == 0) {
-            this.toast("没有发现新内容，休息一下吧！");
             return;
         }
 
-        this.toast(String.format("本次更新了%d个内容", threadList.size()));
         Thread endNotify = new Thread(true, "上次看到这里，点击刷新");
         threadList.add(endNotify);
 

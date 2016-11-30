@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 
 
 
-public class Thread {
+public class Thread implements Serializable{
     private int _threadId;
     private int _categoryId;
     private int _topicId;
@@ -101,7 +102,7 @@ public class Thread {
     }
 
     public String getUpCount() {
-        _upCount = 18300;
+
         if (_upCount < MaxNumberFormat) {
             return String.format("%d", _upCount);
         }
@@ -111,7 +112,6 @@ public class Thread {
 
     public String getDownCount() {
 
-        _downCount = 883292;
         if (_downCount < MaxNumberFormat) {
             return String.format("%d", _downCount);
         }
@@ -121,7 +121,6 @@ public class Thread {
 
     public String getCommentCount() {
 
-        _commentCount = 3892822;
         if (_commentCount < MaxNumberFormat) {
             return String.format("%d", _commentCount);
         }

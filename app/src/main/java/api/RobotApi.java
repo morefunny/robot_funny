@@ -61,9 +61,9 @@ public class RobotApi {
     }
 
 
-    public void getCategory(final ReceiveCategoryHandler handler) {
+    public void getCategory(String cateType, final ReceiveCategoryHandler handler) {
 
-        String url = String.format("/category/getall");
+        String url = String.format("/category/getall?type=%s", cateType);
 
         RobotApiClient.get(url, new AsyncHttpResponseHandler() {
 

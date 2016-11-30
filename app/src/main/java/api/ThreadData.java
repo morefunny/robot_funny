@@ -1,10 +1,12 @@
 package api;
 
+import java.io.Serializable;
+
 /**
  * Created by sherlockhua on 2016/11/16.
  */
 
-public class ThreadData {
+public class ThreadData implements Serializable {
 
     private String _dataType;
     private String _data;

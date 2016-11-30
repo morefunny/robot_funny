@@ -11,6 +11,13 @@ import android.view.ViewGroup;
 
 import com.astuetz.PagerSlidingTabStrip;
 
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+
+import api.RCategory;
+import api.ReceiveCategoryHandler;
+import api.RobotApi;
+
 /**
  * Created by sherlockhua on 2016/11/27.
  */
@@ -19,18 +26,56 @@ public class RobotHomepage extends Fragment implements ViewPager.OnPageChangeLis
 
     private ViewPager vpager;
 
-    //几个代表页面的常量
-    public static final int PAGE_ONE = 0;
-    public static final int PAGE_TWO = 1;
-    public static final int PAGE_THREE = 2;
-    public static final int PAGE_FOUR = 3;
-
     private FragmentAdapter mAdapter;
     private FragmentManager fManager;
+    private SimpleDiskCache _categoryCache;
+    private String _categoryType;
+    private RobotApi _robotApi = new RobotApi();
 
     public RobotHomepage() {
 
     }
+
+    public void setCategoryType(String cateType) {
+        _categoryType = cateType;
+    }
+
+    public String getCacheKey() {
+        return String.format("category-%s", _categoryType);
+    }
+
+    public ArrayList<RCategory> getCategoryFromCache() throws Exception {
+
+        ArrayList<RCategory> list  = _categoryCache.getArrayList(getCacheKey());
+        return list;
+    }
+
+    private ReceiveCategoryHandler _handler = new ReceiveCategoryHandler() {
+        public void onReceiveCategoryList(int code, ArrayList<RCategory> data){
+
+            Log.e("code", String.format("%d", code));
+            Log.e("count", String.format("%d", data.size()));
+
+            if (code != 200) {
+                try {
+                    data = getCategoryFromCache();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return;
+                }
+            }
+
+            if (code == 200 && data.size() > 0) {
+                try {
+                    _categoryCache.putArrayList(getCacheKey(), data);
+                }catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+            mAdapter.setCategory(data);
+        }
+    };
 
     public void setManager(FragmentManager manager) {
         fManager = manager;
@@ -40,6 +85,13 @@ public class RobotHomepage extends Fragment implements ViewPager.OnPageChangeLis
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.robot_homepage, container, false);
 
+        try {
+            _categoryCache = SimpleDiskCache.getCache(this.getContext().getString(R.string.text_cache));
+        }catch  (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        _robotApi.getCategory(_categoryType, _handler);
         mAdapter = new FragmentAdapter(fManager);
 
         vpager = (ViewPager) view.findViewById(R.id.vpager);
