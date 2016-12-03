@@ -154,12 +154,14 @@ public class JokeListAdapter extends BaseAdapter {
             holder.imageView.setMaxWidth(width);
             holder.imageView.setMaxHeight(100*width);
 
+            holder.txtContent.setMinHeight(0);
             convertView.setTag(holder);
         }else{
             holder = (ViewHolderImageItem) convertView.getTag();
         }
         // holder.img_icon.setImageResource(mData.get(position).getImgId());
         Thread thread = _threadList.get(position);
+
         holder.txtContent.setText(_threadList.get(position).getContent());
         holder.summery.txtUp.setText(thread.getUpCount());
         holder.summery.txtComment.setText(thread.getCommentCount());
@@ -169,15 +171,24 @@ public class JokeListAdapter extends BaseAdapter {
             Log.e("hasimage", "Yes");
             ArrayList<ThreadData> contentList = thread.getContentList();
             for (int i = 0; i < contentList.size(); i++) {
-                if (contentList.get(i).getDataType().equals("pic")) {
-                    Log.e("url", contentList.get(i).getData());
+                ThreadData threadData = contentList.get(i);
+                String dataType = threadData.getDataType();
+                if (dataType.equals("pic") || dataType.equals("gif")) {
 
                     WindowManager wm = (WindowManager)parent.getContext().getSystemService(Context.WINDOW_SERVICE);
                     int width = wm.getDefaultDisplay().getWidth();
                     Log.e("image", String.format("%d",width));
 
+
+                    String url = threadData.getData();
+                    /*
+                    if (threadData.getThumb().length() > 0) {
+                        url = threadData.getThumb();
+                    }*/
+                    Log.e("url", url);
+
                     Glide.with(holder.imageView.getContext())
-                            .load(contentList.get(i).getData())
+                            .load(url)
                             .placeholder(R.mipmap.ic_placeholder)
                             .error(R.mipmap.ic_placeholder)
                             .crossFade()

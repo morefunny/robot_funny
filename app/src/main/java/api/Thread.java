@@ -31,7 +31,7 @@ public class Thread implements Serializable{
 
     public Thread(boolean isNotify, String content) {
         _isNotify = isNotify;
-        ThreadData data = new ThreadData(content, "text");
+        ThreadData data = new ThreadData(content, "text", "");
         _contentList = new ArrayList<ThreadData>();
         _contentList.add(data);
     }
@@ -57,7 +57,14 @@ public class Thread implements Serializable{
 
             String data = nodeObj.getString("data");
             String type = nodeObj.getString("type");
-            ThreadData threadData = new ThreadData(data, type);
+            String thumb;
+            try {
+                thumb = nodeObj.getString("thumb");
+            } catch (JSONException e) {
+                thumb = "";
+            }
+
+            ThreadData threadData = new ThreadData(data, type, thumb);
             _contentList.add(threadData);
         }
     }
