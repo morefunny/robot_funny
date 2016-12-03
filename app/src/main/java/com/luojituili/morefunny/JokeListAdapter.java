@@ -30,6 +30,7 @@ public class JokeListAdapter extends BaseAdapter {
     private static final int TYPE_JOKE_TEXT = 0;
     private static final int TYPE_JOKE_IMAGE = 1;
     private static final int TYPE_JOKE_NOTIFY = 2;
+    private static final int TYPE_JOKE_GIF = 3;
     private Context mContext;
     private SwipeRefreshLayout.OnRefreshListener _swipeListener;
 
@@ -110,7 +111,11 @@ public class JokeListAdapter extends BaseAdapter {
             return TYPE_JOKE_NOTIFY;
         }
 
-        if (thread.hasImage()) {
+        if (thread.isGif()) {
+            return TYPE_JOKE_GIF;
+        }
+
+        if (thread.isPic()) {
             return TYPE_JOKE_IMAGE;
         }
 
@@ -119,7 +124,7 @@ public class JokeListAdapter extends BaseAdapter {
 
     @Override
     public int getViewTypeCount() {
-        return 3;
+        return 4;
     }
 
     private View getImageView(int position, View convertView, ViewGroup parent) {
@@ -256,10 +261,15 @@ public class JokeListAdapter extends BaseAdapter {
 
         int type = getItemViewType(position);
         switch (type) {
+            case TYPE_JOKE_GIF:
+                Log.e("list", "gif");
+                convertView = getImageView(position, convertView, parent);
+                break;
             case TYPE_JOKE_IMAGE:
                 convertView = getImageView(position, convertView, parent);
                 break;
             case TYPE_JOKE_TEXT:
+                Log.e("list", "text");
                 convertView = getTextView(position, convertView, parent);
                 break;
             case TYPE_JOKE_NOTIFY:

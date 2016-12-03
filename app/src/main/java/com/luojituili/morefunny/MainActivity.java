@@ -1,7 +1,6 @@
 package com.luojituili.morefunny;
 
 import android.os.Bundle;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.RadioButton;
@@ -20,12 +19,11 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     private RadioButton robot_rb_favorite;
     private RadioButton robot_rb_setting;
 
+    //private FragmentManager fManager;
 
-    private FragmentAdapter mAdapter;
-    private FragmentManager fManager;
-
+    //private RobotHomepage _robotHomePage;
     private RobotHomepage _robotHomePage;
-    private JokePage _robotGifPage;
+    private RobotHomepage _robotGifPage;
     private FavoritePage _robotFavoritePage;
     private SettingPage _robotSettingPage;
 
@@ -34,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        fManager = getSupportFragmentManager();
+        //fManager = getSupportFragmentManager();
         //mAdapter = new FragmentAdapter(fManager);
         bindViews();
         robot_rb_home.setChecked(true);
@@ -67,14 +65,15 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
 
 @Override
 public void onCheckedChanged(RadioGroup group, int checkedId) {
-    FragmentTransaction fTransaction = fManager.beginTransaction();
+    FragmentTransaction fTransaction = getSupportFragmentManager().beginTransaction();
     hideAllFragment(fTransaction);
     switch (checkedId){
         case R.id.robot_rb_home:
             if(_robotHomePage == null){
                 _robotHomePage = new RobotHomepage();
                 _robotHomePage.setCategoryType(this.getString(R.string.category_type_static));
-                _robotHomePage.setManager(fManager);
+                //_robotHomePage.setManager(fManager);
+                //_robotHomePage = new JokePage();
                 fTransaction.add(R.id.robot_bottom_page, _robotHomePage);
             }else{
                 fTransaction.show(_robotHomePage);
@@ -82,7 +81,9 @@ public void onCheckedChanged(RadioGroup group, int checkedId) {
             break;
         case R.id.robot_rb_gif:
             if(_robotGifPage == null){
-                _robotGifPage = new JokePage();
+                _robotGifPage = new RobotHomepage();
+                _robotGifPage.setCategoryType(this.getString(R.string.category_type_gif));
+                //_robotGifPage.setManager(fManager);
                 fTransaction.add(R.id.robot_bottom_page,_robotGifPage);
             }else{
                 fTransaction.show(_robotGifPage);

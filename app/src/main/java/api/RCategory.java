@@ -3,11 +3,13 @@ package api;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 /**
  * Created by sherlockhua on 2016/11/27.
  */
 
-public class RCategory {
+public class RCategory  implements Serializable {
 
     private int _categoryId;
     private  String _categoryName;

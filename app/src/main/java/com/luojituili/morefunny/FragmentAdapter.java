@@ -43,11 +43,15 @@ public class FragmentAdapter extends FragmentPagerAdapter {
 
     //本地默认的类别列表
     private void initDefaultCategory() {
+/*
+        if (_jokePageList.size() > 0) {
+            return;
+        }
 
         JokePage jokePage = new JokePage();
         jokePage.setCategoryId(0);
         jokePage.setCategoryName("推荐");
-        _jokePageList.add(jokePage);
+        _jokePageList.add(jokePage);*/
     }
 
     public FragmentAdapter(FragmentManager fm) {

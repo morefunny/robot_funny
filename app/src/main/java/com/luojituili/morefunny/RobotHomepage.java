@@ -27,7 +27,7 @@ public class RobotHomepage extends Fragment implements ViewPager.OnPageChangeLis
     private ViewPager vpager;
 
     private FragmentAdapter mAdapter;
-    private FragmentManager fManager;
+    //private FragmentManager fManager;
     private SimpleDiskCache _categoryCache;
     private String _categoryType;
     private RobotApi _robotApi = new RobotApi();
@@ -77,9 +77,10 @@ public class RobotHomepage extends Fragment implements ViewPager.OnPageChangeLis
         }
     };
 
-    public void setManager(FragmentManager manager) {
+   /* public void setManager(FragmentManager manager) {
         fManager = manager;
-    }
+    }*/
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -91,6 +92,7 @@ public class RobotHomepage extends Fragment implements ViewPager.OnPageChangeLis
             e.printStackTrace();
         }
 
+        FragmentManager fManager = getChildFragmentManager();
         _robotApi.getCategory(_categoryType, _handler);
         mAdapter = new FragmentAdapter(fManager);
 

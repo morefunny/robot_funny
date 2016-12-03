@@ -67,8 +67,17 @@ public class Thread implements Serializable{
     }
 
     public boolean hasImage() {
+        return isPic() || isGif();
+    }
+
+    public boolean isPic() {
         return _threadType.equals("Pic");
     }
+
+    public boolean isGif() {
+        return _threadType.equals("Gif");
+    }
+
 
     public void setThreadId(int threadId) {
         _threadId = threadId;
