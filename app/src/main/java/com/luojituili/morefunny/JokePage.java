@@ -139,6 +139,9 @@ public class JokePage extends Fragment implements SwipeRefreshLayout.OnRefreshLi
                             e.printStackTrace();
                         }
                     }
+
+                    int position = view.getFirstVisiblePosition();
+                    _adapter.onItemVisible(position);
                 }
             }
 

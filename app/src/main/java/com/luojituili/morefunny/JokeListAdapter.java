@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.bumptech.glide.DrawableRequestBuilder;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
@@ -181,11 +182,24 @@ public class JokeListAdapter extends BaseAdapter {
 
 
                     String url = threadData.getData();
-                    /*
+
+                    //如果有缩略图，则加载
                     if (threadData.getThumb().length() > 0) {
-                        url = threadData.getThumb();
-                    }*/
-                    Log.e("url", url);
+                        String thumbUrl = threadData.getThumb();
+                        DrawableRequestBuilder<String> thumbnailRequest = Glide
+                                .with( holder.imageView.getContext())
+                                .load(thumbUrl);
+
+                        Glide.with(holder.imageView.getContext())
+                                .load(url)
+                                .placeholder(R.mipmap.ic_placeholder)
+                                .error(R.mipmap.ic_placeholder)
+                                .crossFade()
+                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .thumbnail(thumbnailRequest)
+                                .into(holder.imageView);
+                        continue;
+                    }
 
                     Glide.with(holder.imageView.getContext())
                             .load(url)
@@ -199,6 +213,17 @@ public class JokeListAdapter extends BaseAdapter {
         }
 
         return convertView;
+    }
+
+    public void onItemVisible(int position) {
+        int type = getItemViewType(position);
+        switch (type) {
+            case TYPE_JOKE_GIF:
+                Log.e("list", "gif");
+
+                break;
+        }
+
     }
 
     private View getTextView(int position, View convertView, ViewGroup parent) {
