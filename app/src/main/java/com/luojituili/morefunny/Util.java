@@ -14,6 +14,8 @@ import java.io.File;
 
 public class Util {
 
+    public static String _imei;
+
     public static File getDiskCacheDir(Context context, String uniqueName) {
         String cachePath;
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())
@@ -37,6 +39,14 @@ public class Util {
         }
 
         return 1;
+    }
+
+    public static void setImei(String imei) {
+        _imei = imei;
+    }
+
+    public static String getImei() {
+        return _imei;
     }
 
 }

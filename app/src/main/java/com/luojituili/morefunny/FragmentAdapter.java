@@ -17,7 +17,6 @@ import api.RCategory;
 public class FragmentAdapter extends FragmentPagerAdapter {
 
     private final int PAGER_COUNT = 4;
-
     private ArrayList<JokePage> _jokePageList = new ArrayList<JokePage>();
 
 
@@ -41,23 +40,9 @@ public class FragmentAdapter extends FragmentPagerAdapter {
         notifyDataSetChanged();
     }
 
-    //本地默认的类别列表
-    private void initDefaultCategory() {
-/*
-        if (_jokePageList.size() > 0) {
-            return;
-        }
-
-        JokePage jokePage = new JokePage();
-        jokePage.setCategoryId(0);
-        jokePage.setCategoryName("推荐");
-        _jokePageList.add(jokePage);*/
-    }
-
     public FragmentAdapter(FragmentManager fm) {
 
         super(fm);
-        initDefaultCategory();
     }
 
     @Override

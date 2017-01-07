@@ -1,6 +1,8 @@
 package com.luojituili.morefunny;
 
 import android.content.Context;
+import android.graphics.drawable.Animatable;
+import android.net.Uri;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,13 +10,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.bumptech.glide.DrawableRequestBuilder;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.controller.BaseControllerListener;
+import com.facebook.drawee.controller.ControllerListener;
+import com.facebook.drawee.drawable.ProgressBarDrawable;
+import com.facebook.drawee.drawable.ScalingUtils;
+import com.facebook.drawee.generic.GenericDraweeHierarchy;
+import com.facebook.drawee.generic.GenericDraweeHierarchyBuilder;
+import com.facebook.drawee.interfaces.DraweeController;
+import com.facebook.drawee.view.SimpleDraweeView;
+import com.facebook.imagepipeline.image.ImageInfo;
+import com.facebook.imagepipeline.request.ImageRequest;
+import com.facebook.imagepipeline.request.ImageRequestBuilder;
 
 import java.util.ArrayList;
 
@@ -32,6 +42,7 @@ public class JokeListAdapter extends BaseAdapter {
     private static final int TYPE_JOKE_IMAGE = 1;
     private static final int TYPE_JOKE_NOTIFY = 2;
     private static final int TYPE_JOKE_GIF = 3;
+    private static final int TYPE_LONG_TEXT = 4;
     private Context mContext;
     private SwipeRefreshLayout.OnRefreshListener _swipeListener;
 
@@ -89,6 +100,9 @@ public class JokeListAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public Thread getItemData(int pos) {
+        return _threadList.get(pos);
+    }
 
     @Override
     public int getCount() {
@@ -108,6 +122,11 @@ public class JokeListAdapter extends BaseAdapter {
     @Override
     public int getItemViewType(int position) {
         Thread thread = _threadList.get(position);
+
+        if (thread.isLongText()) {
+            return TYPE_LONG_TEXT;
+        }
+
         if (thread.isNotify()) {
             return TYPE_JOKE_NOTIFY;
         }
@@ -125,7 +144,69 @@ public class JokeListAdapter extends BaseAdapter {
 
     @Override
     public int getViewTypeCount() {
-        return 4;
+        return 5;
+    }
+
+    public void loadImage(final SimpleDraweeView imageView, final ThreadData data, final int imageWidth) {
+
+        final ControllerListener controllerListener = new BaseControllerListener<ImageInfo>(){
+            @Override
+            public void onFinalImageSet(String id,  ImageInfo imageInfo,  Animatable anim) {
+                if (imageInfo == null) {
+                    return;
+                }
+
+                int height = imageInfo.getHeight();
+                int width = imageInfo.getWidth();
+                ViewGroup.LayoutParams layoutParams = imageView.getLayoutParams();
+
+                layoutParams.width = imageWidth;
+                layoutParams.height = (int) ((float) (imageWidth * height) / (float) width);
+                imageView.setLayoutParams(layoutParams);
+            }
+
+
+        };
+
+        if (data.getDataType().equals("gif")) {
+            ImageRequest request = ImageRequestBuilder.newBuilderWithSource(Uri.parse(data.getThumb()))
+                    .setProgressiveRenderingEnabled(true)
+                    .build();
+            DraweeController controller = Fresco.newDraweeControllerBuilder()
+                    .setControllerListener(controllerListener)
+                    .setLowResImageRequest(request)
+                    .setUri(Uri.parse(data.getData()))
+                    .setAutoPlayAnimations(true)
+                    .setTapToRetryEnabled(true)
+                    .build();
+            imageView.setController(controller);
+
+            GenericDraweeHierarchyBuilder builder =
+                    new GenericDraweeHierarchyBuilder(mContext.getResources());
+            GenericDraweeHierarchy hierarchy = builder
+                    .setProgressBarImage(new ProgressBarDrawable())
+                    .setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP)
+                    .build();
+            imageView.setHierarchy(hierarchy);
+            return;
+        }
+
+        DraweeController controller = Fresco.newDraweeControllerBuilder()
+                .setControllerListener(controllerListener)
+                .setUri(Uri.parse(data.getData()))
+                .setAutoPlayAnimations(true)
+                .setTapToRetryEnabled(true)
+                .build();
+
+        imageView.setController(controller);
+
+        GenericDraweeHierarchyBuilder builder =
+                new GenericDraweeHierarchyBuilder(mContext.getResources());
+        GenericDraweeHierarchy hierarchy = builder
+                .setProgressBarImage(new ProgressBarDrawable())
+                .setActualImageScaleType(ScalingUtils.ScaleType.CENTER_CROP)
+                .build();
+        imageView.setHierarchy(hierarchy);
     }
 
     private View getImageView(int position, View convertView, ViewGroup parent) {
@@ -134,7 +215,7 @@ public class JokeListAdapter extends BaseAdapter {
         if(convertView == null){
             convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item_image,parent,false);
             holder = new ViewHolderImageItem();
-            holder.imageView = (ImageView) convertView.findViewById(R.id.imageView);
+            holder.imageView = (SimpleDraweeView) convertView.findViewById(R.id.imageView);
             holder.txtContent = (TextView) convertView.findViewById(R.id.txt_content);
             holder.summery.txtUp = (TextView)convertView.findViewById(R.id.robot_digg);
             holder.summery.txtDown = (TextView)convertView.findViewById(R.id.robot_bury);
@@ -148,19 +229,11 @@ public class JokeListAdapter extends BaseAdapter {
             lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
             holder.txtContent.setLayoutParams(lp);
 
-            ViewGroup.LayoutParams lpImage = holder.imageView.getLayoutParams();
-            lpImage.width = width*9/10;
-            lpImage.height = ViewGroup.LayoutParams.WRAP_CONTENT;
-            holder.imageView.setLayoutParams(lpImage);
-            holder.imageView.setMaxWidth(width);
-            holder.imageView.setMaxHeight(100*width);
-
-            holder.txtContent.setMinHeight(0);
             convertView.setTag(holder);
         }else{
             holder = (ViewHolderImageItem) convertView.getTag();
         }
-        // holder.img_icon.setImageResource(mData.get(position).getImgId());
+
         Thread thread = _threadList.get(position);
 
         holder.txtContent.setText(_threadList.get(position).getContent());
@@ -180,35 +253,71 @@ public class JokeListAdapter extends BaseAdapter {
                     int width = wm.getDefaultDisplay().getWidth();
                     Log.e("image", String.format("%d",width));
 
-
-                    String url = threadData.getData();
-
-                    //如果有缩略图，则加载
-                    if (threadData.getThumb().length() > 0) {
-                        String thumbUrl = threadData.getThumb();
-                        DrawableRequestBuilder<String> thumbnailRequest = Glide
-                                .with( holder.imageView.getContext())
-                                .load(thumbUrl);
-
-                        Glide.with(holder.imageView.getContext())
-                                .load(url)
-                                .placeholder(R.mipmap.ic_placeholder)
-                                .error(R.mipmap.ic_placeholder)
-                                .crossFade()
-                                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                .thumbnail(thumbnailRequest)
-                                .into(holder.imageView);
-                        continue;
-                    }
-
-                    Glide.with(holder.imageView.getContext())
-                            .load(url)
-                            .placeholder(R.mipmap.ic_placeholder)
-                            .error(R.mipmap.ic_placeholder)
-                            .crossFade()
-                            .diskCacheStrategy(DiskCacheStrategy.ALL)
-                            .into(holder.imageView);
+                    loadImage(holder.imageView, threadData, width*9/10);
+                    /*DraweeController controller = Fresco.newDraweeControllerBuilder()
+                            .setUri(url)
+                            .setAutoPlayAnimations(true)
+                            .setTapToRetryEnabled(true)
+                            .build();*/
                 }
+            }
+        }
+
+        return convertView;
+    }
+
+
+    private View getLongTextView(int position, View convertView, ViewGroup parent) {
+
+        ViewHolderImageItem holder = null;
+        if(convertView == null){
+            convertView = LayoutInflater.from(mContext).inflate(R.layout.list_item_image,parent,false);
+            holder = new ViewHolderImageItem();
+            holder.imageView = (SimpleDraweeView) convertView.findViewById(R.id.imageView);
+            holder.txtContent = (TextView) convertView.findViewById(R.id.txt_content);
+            holder.summery.txtUp = (TextView)convertView.findViewById(R.id.robot_digg);
+            holder.summery.txtDown = (TextView)convertView.findViewById(R.id.robot_bury);
+            holder.summery.txtComment = (TextView)convertView.findViewById(R.id.robot_comment_count);
+
+            WindowManager wm = (WindowManager)parent.getContext().getSystemService(Context.WINDOW_SERVICE);
+            int width = wm.getDefaultDisplay().getWidth();
+
+            ViewGroup.LayoutParams lp = holder.txtContent.getLayoutParams();
+            lp.width = width*9/10;
+            lp.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            holder.txtContent.setLayoutParams(lp);
+
+            convertView.setTag(holder);
+        }else{
+            holder = (ViewHolderImageItem) convertView.getTag();
+        }
+
+        Thread thread = _threadList.get(position);
+
+        holder.txtContent.setText(_threadList.get(position).getTitle());
+        holder.summery.txtUp.setText(thread.getUpCount());
+        holder.summery.txtComment.setText(thread.getCommentCount());
+        holder.summery.txtDown.setText(thread.getDownCount());
+
+        ArrayList<ThreadData> contentList = thread.getContentList();
+        for (int i = 0; i < contentList.size(); i++) {
+            ThreadData threadData = contentList.get(i);
+            String dataType = threadData.getDataType();
+            if (dataType.equals("pic") || dataType.equals("gif")) {
+
+                WindowManager wm = (WindowManager)parent.getContext().getSystemService(Context.WINDOW_SERVICE);
+                int width = wm.getDefaultDisplay().getWidth();
+                Log.e("image", String.format("%d",width));
+
+
+                String url = threadData.getData();
+                loadImage(holder.imageView, threadData, width*9/10);
+                /*DraweeController controller = Fresco.newDraweeControllerBuilder()
+                        .setUri(url)
+                        .setAutoPlayAnimations(true)
+                        .setTapToRetryEnabled(true)
+                        .build();*/
+                break;
             }
         }
 
@@ -311,6 +420,9 @@ public class JokeListAdapter extends BaseAdapter {
             case TYPE_JOKE_NOTIFY:
                 convertView = getNotifyView(position, convertView, parent);
                 break;
+            case TYPE_LONG_TEXT:
+                convertView = getLongTextView(position, convertView, parent);
+                break;
             default:
                 break;
         }
@@ -325,7 +437,7 @@ public class JokeListAdapter extends BaseAdapter {
     }
 
     private class ViewHolderImageItem{
-        ImageView imageView;
+        SimpleDraweeView imageView;
         TextView txtContent;
 
         ViewHolderSummery summery = new ViewHolderSummery();

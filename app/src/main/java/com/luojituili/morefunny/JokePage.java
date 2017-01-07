@@ -2,6 +2,7 @@ package com.luojituili.morefunny;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,8 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
+
+import com.facebook.drawee.backends.pipeline.Fresco;
 
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -41,8 +45,11 @@ public class JokePage extends Fragment implements SwipeRefreshLayout.OnRefreshLi
     private final String _configFileName = "update.index";
     private  int _curUpdateIndex = 0;
     private int _curHistoryIndex = 0;
+    private int _curMaxTid = -1;
+    private int _curMinTid = -1;
 
     public JokePage() {
+
     }
 
     public void setCategoryId(int categoryId) {
@@ -76,10 +83,24 @@ public class JokePage extends Fragment implements SwipeRefreshLayout.OnRefreshLi
 
             Log.e("catId", String.format("%d", catId));
             Log.e("count", String.format("%d", data.size()));
+
+
             for (int i = 0; i< data.size(); i++) {
-                Log.e("threadId", String.format("%d", data.get(i).getThreadId()));
+                int tid = data.get(i).getThreadId();
+                if (tid > _curMaxTid) {
+                    _curMaxTid = tid;
+                }
+
+                if (_curMinTid == -1) {
+                    _curMinTid = tid;
+                }
+
+                if (_curMinTid > tid) {
+                    _curMinTid = tid;
+                }
             }
 
+            Log.e("tid", String.format("max[%d] min[%d]", _curMaxTid, _curMinTid));
             if (code == 200) {
 
                 try {
@@ -102,6 +123,12 @@ public class JokePage extends Fragment implements SwipeRefreshLayout.OnRefreshLi
     };
 
 
+    public void loadCategoryPos() {
+
+        SharedPreferences sp = getContext().getSharedPreferences(_configFileName, Context.MODE_PRIVATE);
+        _curMaxTid = sp.getInt(getReadMaxKey(), -1);
+        _curMinTid = sp.getInt(getReadMinKey(), -1);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -119,29 +146,58 @@ public class JokePage extends Fragment implements SwipeRefreshLayout.OnRefreshLi
             e.printStackTrace();
         }
 
+        loadCategoryPos();
+        jokeList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Log.e("click", "item click");
+                Intent intent = new Intent(getActivity(), JokeDetailPage.class);
+                Thread data = _adapter.getItemData(position);
+
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("thread", data);
+
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
+
         jokeList.setOnScrollListener(new OnScrollListener() {
 
             @Override
             public void onScrollStateChanged(AbsListView view, int scrollState) {
                 // 当不滚动时
-                if (scrollState == OnScrollListener.SCROLL_STATE_IDLE) {
-                    //判断是否滚动到底部
-                    if (view.getLastVisiblePosition() == view.getCount() - 1) {
-                        try {
-                            _curHistoryIndex--;
-                            if (_curHistoryIndex <= 0) {
-                                return;
-                            }
-
-                            ArrayList<Thread> threadList = _threadCache.getArrayList(getCacheKey(_curHistoryIndex));
-                            _adapter.appendThreadList(threadList);
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                switch (scrollState)
+                {
+                    case OnScrollListener.SCROLL_STATE_IDLE:
+                        if (Fresco.getImagePipeline().isPaused()) {
+                            Fresco.getImagePipeline().resume();
                         }
-                    }
 
-                    int position = view.getFirstVisiblePosition();
-                    _adapter.onItemVisible(position);
+                        if (view.getLastVisiblePosition() == view.getCount() - 1) {
+                            try {
+                                _curHistoryIndex--;
+                                if (_curHistoryIndex <= 0) {
+                                    return;
+                                }
+
+                                ArrayList<Thread> threadList = _threadCache.getArrayList(getCacheKey(_curHistoryIndex));
+                                _adapter.appendThreadList(threadList);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        int position = view.getFirstVisiblePosition();
+                        _adapter.onItemVisible(position);
+                        break;
+                    case OnScrollListener.SCROLL_STATE_FLING:
+                    case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
+                        if (!Fresco.getImagePipeline().isPaused()) {
+                            Fresco.getImagePipeline().pause();
+                        }
+                        break;
                 }
             }
 
@@ -168,6 +224,15 @@ public class JokePage extends Fragment implements SwipeRefreshLayout.OnRefreshLi
     public String getUpdateIndexKey() {
         return String.format("%d-index", _categoryId);
     }
+
+    public String getReadMaxKey() {
+        return String.format("%d-max-pos", _categoryId);
+    }
+
+    public String getReadMinKey() {
+        return String.format("%d-min-pos", _categoryId);
+    }
+
 
     public String getCacheKey(int curIndex) {
         return String.format("%d-%d", _categoryId, curIndex);
@@ -202,6 +267,8 @@ public class JokePage extends Fragment implements SwipeRefreshLayout.OnRefreshLi
         Log.e("jokepage", "stop");
         SharedPreferences sp = getContext().getSharedPreferences(_configFileName, Context.MODE_PRIVATE);
         sp.edit().putInt(getUpdateIndexKey(), _curUpdateIndex).commit();
+        sp.edit().putInt(getReadMaxKey(), _curMaxTid).commit();
+        sp.edit().putInt(getReadMinKey(), _curMinTid).commit();
         super.onStop();
     }
 
@@ -209,7 +276,7 @@ public class JokePage extends Fragment implements SwipeRefreshLayout.OnRefreshLi
         new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    _robotApi.getJokeList(1001, _categoryId, 10, _handler);
+                    _robotApi.getJokeList(-1, Util.getImei(), _categoryId, _curMaxTid, _curMinTid, 10, _handler);
                 }
             }, 365
         );

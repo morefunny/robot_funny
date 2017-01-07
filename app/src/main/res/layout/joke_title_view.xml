@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/robot_title"
+        android:paddingTop="32.0dip"
+        android:paddingBottom="32.0dip"
+        android:paddingLeft="4.0dip"
+        android:paddingRight="4.0dip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="62.0dip"
+        android:textColor="@color/bg_black"
+        android:lineSpacingMultiplier="1.3"
+        android:textSize="@dimen/robot_title_text_size"
+        android:layout_gravity="center"
+        />
+    <View android:id="@+id/robot_title_divider" style="@style/robot_view_divider" />
+</LinearLayout>

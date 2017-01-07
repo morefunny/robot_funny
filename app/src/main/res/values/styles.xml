@@ -27,8 +27,15 @@
     <style name="robot_spipe_view_top_divider">
         <item name="android:background">@color/bg_topbar</item>
         <item name="android:layout_width">fill_parent</item>
-        <item name="android:layout_height">8.0dip</item>
+        <item name="android:layout_height">1.0dip</item>
     </style>
+
+    <style name="robot_view_divider">
+        <item name="android:background">@color/bg_topbar</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">1.0dip</item>
+    </style>
+
 
     <style name="robot_action_layout">
         <item name="android:background">@color/robot_action_layout</item>

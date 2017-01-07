@@ -10,6 +10,7 @@
         android:paddingTop="16.0dip"
         android:paddingRight="15.0dip"
         android:paddingBottom="16.0dip"
+        android:clickable="false"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         style="@style/robot_action_layout">

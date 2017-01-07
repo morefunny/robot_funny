@@ -23,6 +23,9 @@ public class Thread implements Serializable{
     private int _downCount;
     private int _commentCount;
     private String _createTime;
+    private String _title;
+    private int _isLongText;
+
     private boolean _isNotify;
     private int MaxNumberFormat = 10000;
 
@@ -48,6 +51,8 @@ public class Thread implements Serializable{
         _commentCount = obj.getInt("CommentCount");
         _createTime = obj.getString("CreateTime");
         _threadType = obj.getString("ThreadType");
+        _title = obj.getString("Title");
+        _isLongText = obj.getInt("IsLongText");
 
         _contentList = new ArrayList<ThreadData>();
         String content = obj.getString("Content");
@@ -104,6 +109,14 @@ public class Thread implements Serializable{
 
     public ArrayList<ThreadData> getContentList() {
         return _contentList;
+    }
+
+    public String getTitle() {
+        return _title;
+    }
+
+    public boolean isLongText() {
+        return _isLongText == 1;
     }
 
     public String getContent() {

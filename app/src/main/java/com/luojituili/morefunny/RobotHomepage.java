@@ -93,7 +93,7 @@ public class RobotHomepage extends Fragment implements ViewPager.OnPageChangeLis
         }
 
         FragmentManager fManager = getChildFragmentManager();
-        _robotApi.getCategory(_categoryType, _handler);
+        _robotApi.getCategory(_categoryType, Util.getImei(), _handler);
         mAdapter = new FragmentAdapter(fManager);
 
         vpager = (ViewPager) view.findViewById(R.id.vpager);
@@ -108,9 +108,21 @@ public class RobotHomepage extends Fragment implements ViewPager.OnPageChangeLis
         Log.e("tab", String.format("font-size:%d", fontSize));
         tabs.setTextSize((int)(fontSize*1.2));
 
+        loadCategoryFromCache();
         return view;
     }
 
+    public void loadCategoryFromCache() {
+        try {
+            ArrayList<RCategory> data = getCategoryFromCache();
+            if (data.size() > 0) {
+                mAdapter.setCategory(data);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+    }
 
     @Override
     public void onPageScrollStateChanged(int state) {

@@ -1,8 +1,11 @@
 package com.luojituili.morefunny;
 
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -37,7 +40,22 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         bindViews();
         robot_rb_home.setChecked(true);
 
+        String imei = getImei();
+        Log.e("imei is ", imei);
+
         initCache();
+    }
+
+
+    public String getImei() {
+        TelephonyManager TelephonyMgr = (TelephonyManager) getSystemService(TELEPHONY_SERVICE);
+        String strImei = TelephonyMgr.getDeviceId();
+        if (strImei == null) {
+            strImei = Settings.Secure.getString(this.getContentResolver(), Settings.Secure.ANDROID_ID);
+        }
+
+        Util.setImei(strImei);
+        return strImei;
     }
 
     private void initCache() {

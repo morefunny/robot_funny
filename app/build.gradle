@@ -34,4 +34,7 @@ dependencies {
    // compile 'com.wx.goodview:goodview:1.0.0'
     compile 'com.jpardogo.materialtabstrip:library:1.1.1'
     testCompile 'junit:junit:4.12'
+    compile 'com.facebook.fresco:fresco:0.12.0'
+    compile 'com.facebook.fresco:animated-webp:0.12.0'
+    compile 'com.facebook.fresco:webpsupport:0.12.0'
 }
