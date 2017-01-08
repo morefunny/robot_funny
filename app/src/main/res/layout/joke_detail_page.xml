@@ -49,6 +49,22 @@ android:background="@color/bg_white"
 
         <TextView
             android:gravity="center"
+            android:id="@+id/robot_transfer"
+            android:paddingLeft="8.0dip"
+            android:paddingRight="8.0dip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10.0dip"
+            android:layout_marginTop="1.0dip"
+            android:layout_marginBottom="1.0dip"
+            android:drawableLeft="@drawable/robot_more_action"
+            android:drawablePadding="8.0dip"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            style="@style/robot_action_text" />
+
+        <TextView
+            android:gravity="center"
             android:id="@+id/robot_favorite"
             android:paddingLeft="8.0dip"
             android:paddingRight="8.0dip"
@@ -59,7 +75,7 @@ android:background="@color/bg_white"
             android:layout_marginBottom="1.0dip"
             android:drawableLeft="@drawable/robot_favorite"
             android:drawablePadding="8.0dip"
-            android:layout_alignParentRight="true"
+            android:layout_toLeftOf="@id/robot_transfer"
             android:layout_centerVertical="true"
             style="@style/robot_action_text" />
 
@@ -73,6 +89,7 @@ android:background="@color/bg_white"
             android:drawableLeft="@drawable/robot_comment"
             android:drawablePadding="4.0dip"
             android:layout_toLeftOf="@id/robot_favorite"
+            android:layout_centerVertical="true"
             style="@style/robot_action_text" />
 
 
