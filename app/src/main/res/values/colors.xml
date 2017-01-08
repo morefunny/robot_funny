@@ -20,4 +20,6 @@
     <color name="robot_action_layout">#ffffff</color>
     <color name="robot_action_text">#ff999999</color>
     <color name="robot_refresh_text">#ff2a90d7</color>
+
+    <color name="robot_light_gray">#CDCDCD</color>
 </resources>

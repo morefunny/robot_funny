@@ -7,6 +7,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import java.io.File;
+import java.util.HashMap;
 
 /**
  * Created by sherlockhua on 2016/11/28.
@@ -15,6 +16,7 @@ import java.io.File;
 public class Util {
 
     public static String _imei;
+    private static HashMap<Integer, Long> _categoryUpdateMap = new HashMap<>(128);
 
     public static File getDiskCacheDir(Context context, String uniqueName) {
         String cachePath;
@@ -47,6 +49,28 @@ public class Util {
 
     public static String getImei() {
         return _imei;
+    }
+
+    public static boolean isNeedUpdate(int categoryId) {
+        Integer key = Integer.valueOf(categoryId);
+        long now = System.currentTimeMillis()/1000;
+        if (!_categoryUpdateMap.containsKey(key)) {
+            Long val = Long.valueOf(now);
+            _categoryUpdateMap.put(key, val);
+            Log.e("update", String.format("not exits:%d", now));
+            return true;
+        }
+
+        Long val = _categoryUpdateMap.get(key);
+        long last = val.longValue();
+
+        Log.e("update", String.format("now:%d last:%d", now, last));
+        if (now - last > 600) {
+            _categoryUpdateMap.put(key, Long.valueOf(now));
+            return true;
+        }
+
+        return false;
     }
 
 }

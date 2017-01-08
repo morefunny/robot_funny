@@ -2,9 +2,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <View android:id="@+id/robot_top_divider" style="@style/robot_spipe_view_top_divider" />
     <TextView
         android:id="@+id/robot_title"
-        android:paddingTop="32.0dip"
+        android:paddingTop="16.0dip"
         android:paddingBottom="32.0dip"
         android:paddingLeft="4.0dip"
         android:paddingRight="4.0dip"
@@ -16,5 +17,4 @@
         android:textSize="@dimen/robot_title_text_size"
         android:layout_gravity="center"
         />
-    <View android:id="@+id/robot_title_divider" style="@style/robot_view_divider" />
 </LinearLayout>

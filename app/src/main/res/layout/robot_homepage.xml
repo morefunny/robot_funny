@@ -14,12 +14,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
         <com.astuetz.PagerSlidingTabStrip
             android:id="@+id/robot_top_menu"
             android:layout_width="match_parent"
             android:layout_height="48dp"
-            android:background="?attr/colorAccent" />
+            android:background="#d81e06" />
     </LinearLayout>
     <android.support.v4.view.ViewPager
         android:id="@+id/vpager"

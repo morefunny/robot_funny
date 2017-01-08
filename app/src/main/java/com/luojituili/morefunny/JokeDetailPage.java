@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -27,6 +28,7 @@ public class JokeDetailPage extends AppCompatActivity {
         Log.e("thread", thread.getTitle());
 
         initView(thread);
+        initBottomView(thread);
     }
 
     public void initView(Thread thread) {
@@ -48,6 +50,12 @@ public class JokeDetailPage extends AppCompatActivity {
         JokeDetailListAdapter adapter = new JokeDetailListAdapter(
                 JokeDetailPage.this.getApplicationContext(), detailList, thread);
         detailList.setAdapter(adapter);
+    }
+
+    public void initBottomView(Thread thread) {
+
+        Button commentButton = (Button) findViewById(R.id.robot_comment_button);
+
     }
 
 }

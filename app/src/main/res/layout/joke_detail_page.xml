@@ -5,7 +5,7 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
 android:background="@color/bg_white"
     android:orientation="vertical">
-    <RelativeLayout
+    <LinearLayout
         android:id="@+id/main_top"
         android:layout_width="match_parent"
         android:layout_height="48dp">
@@ -15,16 +15,13 @@ android:background="@color/bg_white"
             android:paddingLeft="8.0dip"
             android:paddingRight="8.0dip"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:minWidth="62.0dip"
+            android:layout_height="48dp"
+            android:minWidth="62.0dp"
             android:drawableLeft="@mipmap/ic_return"
             android:drawablePadding="2.0dip"
             android:layout_alignParentLeft="true"
             />
-        <View android:id="@+id/robot_top_divider" style="@style/robot_view_divider" />
-    </RelativeLayout>
-
-
+    </LinearLayout>
     <RelativeLayout
         android:id="@+id/main_bottom"
         android:layout_width="match_parent"
@@ -33,19 +30,6 @@ android:background="@color/bg_white"
         android:background="@color/robot_gray"
 
         android:layout_height="48dp">
-        <Button
-            android:layout_width="200dp"
-            android:layout_height="36dp"
-            android:background="@drawable/robot_round_edittext"
-            android:text="写评论..."
-
-            android:textColor="@color/text_yellow"
-            android:gravity="center"
-            android:layout_margin="8dp"
-            style="?android:attr/borderlessButtonStyle"
-            android:layout_centerVertical="true"
-            android:layout_alignParentLeft="true"
-            />
 
         <TextView
             android:gravity="center"
@@ -92,7 +76,20 @@ android:background="@color/bg_white"
             android:layout_centerVertical="true"
             style="@style/robot_action_text" />
 
+        <Button
+            android:id="@+id/robot_comment_button"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:background="@drawable/robot_round_edittext"
+            android:text="写评论..."
 
+            android:textColor="@color/text_yellow"
+            android:gravity="center"
+            android:layout_margin="8dp"
+            style="?android:attr/borderlessButtonStyle"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@id/robot_comment_count"
+            />
     </RelativeLayout>
 
     <RelativeLayout
@@ -100,6 +97,7 @@ android:background="@color/bg_white"
         android:layout_height="wrap_content"
         android:layout_below="@id/main_top"
         android:layout_above="@id/main_bottom"
+        android:paddingTop="2dp"
         android:orientation="vertical"
         >
         <ListView
