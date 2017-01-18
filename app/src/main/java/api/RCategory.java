@@ -13,13 +13,13 @@ public class RCategory  implements Serializable {
 
     private int _categoryId;
     private  String _categoryName;
+    private String _categoryType;
 
     public RCategory(JSONObject obj) throws JSONException {
 
-
-        _categoryId = obj.getInt("CategoryId");
-        _categoryName = obj.getString("CategoryName");
-
+        _categoryId = obj.getInt("id");
+        _categoryName = obj.getString("name_cn");
+        _categoryType = obj.getString("type");
     }
 
     public int GetCategoryId() {
@@ -28,5 +28,9 @@ public class RCategory  implements Serializable {
 
     public String GetCategoryName() {
         return _categoryName;
+    }
+
+    public String GetCategoryType() {
+        return _categoryType;
     }
 }

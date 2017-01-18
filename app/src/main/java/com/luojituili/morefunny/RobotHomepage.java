@@ -72,8 +72,16 @@ public class RobotHomepage extends Fragment implements ViewPager.OnPageChangeLis
                     e.printStackTrace();
                 }
             }
+            ArrayList<RCategory> list = new ArrayList<RCategory>();
+            for (int i = 0; i < data.size(); i++) {
+                RCategory cat = data.get(i);
+                if (cat.GetCategoryType().equals(_categoryType) == false) {
+                    continue;
+                }
 
-            mAdapter.setCategory(data);
+                list.add(cat);
+            }
+            mAdapter.setCategory(list);
         }
     };
 

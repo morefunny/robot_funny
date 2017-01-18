@@ -5,7 +5,6 @@ import android.provider.Settings;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
-import android.util.Log;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -40,8 +39,8 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         bindViews();
         robot_rb_home.setChecked(true);
 
-        String imei = getImei();
-        Log.e("imei is ", imei);
+        //String imei = getImei();
+        //Log.e("imei is ", imei);
 
         initCache();
     }
@@ -89,7 +88,7 @@ public void onCheckedChanged(RadioGroup group, int checkedId) {
         case R.id.robot_rb_home:
             if(_robotHomePage == null){
                 _robotHomePage = new RobotHomepage();
-                _robotHomePage.setCategoryType(this.getString(R.string.category_type_static));
+                _robotHomePage.setCategoryType(this.getString(R.string.category_type_home));
                 //_robotHomePage.setManager(fManager);
                 //_robotHomePage = new JokePage();
                 fTransaction.add(R.id.robot_bottom_page, _robotHomePage);

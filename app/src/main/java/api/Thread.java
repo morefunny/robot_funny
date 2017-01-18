@@ -1,5 +1,7 @@
 package api;
 
+import android.util.Log;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -16,34 +18,35 @@ import java.util.ArrayList;
 public class Thread implements Serializable{
     private int _threadId;
     private int _categoryId;
-    private int _topicId;
-    private int _userId;
+
     private String _threadStatus;
     private int _upCount;
     private int _downCount;
     private int _commentCount;
     private String _createTime;
     private String _title;
-    private int _isLongText;
 
     private boolean _isNotify;
     private int MaxNumberFormat = 10000;
 
     private ArrayList<ThreadData> _contentList;
     private String _threadType;
+    private String _layout;
+    private String _source;
 
     public Thread(boolean isNotify, String content) {
         _isNotify = isNotify;
         ThreadData data = new ThreadData(content, "text", "");
         _contentList = new ArrayList<ThreadData>();
         _contentList.add(data);
+
+        _layout = "list_item_notify";
     }
 
     public Thread(JSONObject obj) throws JSONException {
         _threadId = obj.getInt("ThreadId");
         _categoryId = obj.getInt("CategoryId");
-        _topicId = obj.getInt("TopicId");
-        _userId = obj.getInt("UserId");
+
         _threadStatus = obj.getString("ThreadStatus");
 
         _upCount = obj.getInt("UpCount");
@@ -52,8 +55,9 @@ public class Thread implements Serializable{
         _createTime = obj.getString("CreateTime");
         _threadType = obj.getString("ThreadType");
         _title = obj.getString("Title");
-        _isLongText = obj.getInt("IsLongText");
+        _source = obj.getString("Source");
 
+        boolean hasImage = false;
         _contentList = new ArrayList<ThreadData>();
         String content = obj.getString("Content");
         JSONArray contentArr = new JSONArray(content);
@@ -69,9 +73,25 @@ public class Thread implements Serializable{
                 thumb = "";
             }
 
+            if (type.equals("pic") || type.equals("gif")) {
+                hasImage = true;
+            }
+
             ThreadData threadData = new ThreadData(data, type, thumb);
             _contentList.add(threadData);
         }
+
+        try {
+            _layout = obj.getString("Layout");
+        } catch (Exception e) {
+            if (hasImage) {
+                _layout = "list_item_image";
+            } else {
+                _layout = "list_item_text";
+            }
+        }
+
+        Log.e("threadapi", _layout);
     }
 
     public  boolean isNotify () {
@@ -103,9 +123,6 @@ public class Thread implements Serializable{
         _categoryId = catId;
     }
 
-    public void setTopicId(int topicId) {
-        _topicId = topicId;
-    }
 
     public ArrayList<ThreadData> getContentList() {
         return _contentList;
@@ -113,10 +130,6 @@ public class Thread implements Serializable{
 
     public String getTitle() {
         return _title;
-    }
-
-    public boolean isLongText() {
-        return _isLongText == 1;
     }
 
     public String getContent() {
@@ -155,5 +168,27 @@ public class Thread implements Serializable{
         }
 
         return String.format("%.2f万", _commentCount*1.0f/10000);
+    }
+
+    public boolean isArticle() {
+        if (_threadType == null) {
+            return false;
+        }
+        return _threadType.equals("article");
+    }
+
+    public boolean isShort() {
+        if (_threadType == null) {
+            return false;
+        }
+        return _threadType.equals("short");
+    }
+
+    public String getLayout() {
+        return _layout;
+    }
+
+    public String getSource() {
+        return _source;
     }
 }

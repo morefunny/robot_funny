@@ -22,10 +22,10 @@ public class RobotApi {
     }
 
     public void getJokeList(int userId, String imei,  final int catId,
-                            int maxId, int minId, int limit, final ReceiveThreadListHandler handler) {
+                            int offset, int limit, final ReceiveThreadListHandler handler) {
 
-        String url = String.format("/user/query?uid=%d&cat_id=%d&limit=%d&imei=%s&max_tid=%d&min_tid=%d",
-                userId, catId, limit, imei, maxId, minId);
+        String url = String.format("/user/query?uid=%d&cat_id=%d&limit=%d&imei=%s&offset=%d",
+                userId, catId, limit, imei, offset);
 
         RobotApiClient.get(url, new AsyncHttpResponseHandler() {
 
@@ -40,7 +40,8 @@ public class RobotApi {
                     JSONArray threadsArr = dataObject.getJSONArray("threads");
 
                     for (int i = 0; i < threadsArr.length();i ++) {
-                        JSONObject threadObj = threadsArr.getJSONObject(i);
+                        String threadData = threadsArr.getString(i);
+                        JSONObject threadObj = new JSONObject(threadData);
                         Thread thread = new Thread(threadObj);
 
                         threadList.add(thread);
@@ -61,7 +62,6 @@ public class RobotApi {
 
         });
     }
-
 
     public void getCategory(String cateType, String imei, final ReceiveCategoryHandler handler) {
 

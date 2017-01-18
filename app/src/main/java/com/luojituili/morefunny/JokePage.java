@@ -13,6 +13,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
@@ -20,13 +21,17 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
+import com.facebook.drawee.view.SimpleDraweeView;
 
 import java.io.FileNotFoundException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import api.ReceiveThreadListHandler;
 import api.RobotApi;
 import api.Thread;
+import api.ThreadData;
 
 
 /**
@@ -45,8 +50,7 @@ public class JokePage extends Fragment implements SwipeRefreshLayout.OnRefreshLi
     private final String _configFileName = "update.index";
     private  int _curUpdateIndex = 0;
     private int _curHistoryIndex = 0;
-    private int _curMaxTid = -1;
-    private int _curMinTid = -1;
+    private int _curOffset = -1;
 
     public JokePage() {
 
@@ -84,23 +88,8 @@ public class JokePage extends Fragment implements SwipeRefreshLayout.OnRefreshLi
             Log.e("catId", String.format("%d", catId));
             Log.e("count", String.format("%d", data.size()));
 
-
-            for (int i = 0; i< data.size(); i++) {
-                int tid = data.get(i).getThreadId();
-                if (tid > _curMaxTid) {
-                    _curMaxTid = tid;
-                }
-
-                if (_curMinTid == -1) {
-                    _curMinTid = tid;
-                }
-
-                if (_curMinTid > tid) {
-                    _curMinTid = tid;
-                }
-            }
-
-            Log.e("tid", String.format("max[%d] min[%d]", _curMaxTid, _curMinTid));
+            _curOffset += data.size();
+            Log.e("tid", String.format("offset[%d]", _curOffset));
             if (code == 200) {
 
                 try {
@@ -126,8 +115,7 @@ public class JokePage extends Fragment implements SwipeRefreshLayout.OnRefreshLi
     public void loadCategoryPos() {
 
         SharedPreferences sp = getContext().getSharedPreferences(_configFileName, Context.MODE_PRIVATE);
-        _curMaxTid = sp.getInt(getReadMaxKey(), -1);
-        _curMinTid = sp.getInt(getReadMinKey(), -1);
+        _curOffset = sp.getInt(getOffsetKey(), -1);
     }
 
     @Override
@@ -136,7 +124,7 @@ public class JokePage extends Fragment implements SwipeRefreshLayout.OnRefreshLi
         _swipeLayout = (SwipeRefreshLayout)view.findViewById(R.id.refresh_layout);
         _swipeLayout.setOnRefreshListener(this);
 
-        ListView jokeList = (ListView) view.findViewById(R.id.joke_view);
+        final ListView jokeList = (ListView) view.findViewById(R.id.joke_view);
         _adapter = new JokeListAdapter(JokePage.this.getContext(), this, _swipeLayout, jokeList);
         jokeList.setAdapter(_adapter);
 
@@ -189,8 +177,8 @@ public class JokePage extends Fragment implements SwipeRefreshLayout.OnRefreshLi
                             }
                         }
 
-                        int position = view.getFirstVisiblePosition();
-                        _adapter.onItemVisible(position);
+                        //int position = view.getFirstVisiblePosition();
+                        //_adapter.onItemVisible(position);
                         break;
                     case OnScrollListener.SCROLL_STATE_FLING:
                     case OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
@@ -206,6 +194,48 @@ public class JokePage extends Fragment implements SwipeRefreshLayout.OnRefreshLi
                                  int visibleItemCount, int totalItemCount) {
                 // TODO Auto-generated method stub
 
+                Log.e("list", "gif");
+                if (_adapter.getCount() == 0) {
+                    return;
+                }
+
+                WindowManager wm = (WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE);
+                int height = wm.getDefaultDisplay().getHeight();
+
+                int first = jokeList.getFirstVisiblePosition();
+                int last = jokeList.getLastVisiblePosition();
+                boolean found = false;
+                for (int i = first; i <= last; i++) {
+                    Thread thread = _adapter.getItemData(i);
+                    for (int j = 0; j < thread.getContentList().size(); j++) {
+                        ThreadData threadData = thread.getContentList().get(j);
+                        String dataType = threadData.getDataType();
+                        if (dataType.equals("gif")) {
+                            SimpleDraweeView imageView = (SimpleDraweeView)jokeList.findViewWithTag(threadData.getData());
+                            if (imageView == null) {
+                                continue;
+                            }
+
+                            int[] location = new int[2];
+                            imageView.getLocationOnScreen(location);
+                            int imageOffset = imageView.getHeight()/2 + location[1];
+                            Log.e("trace", String.format("%d[%d] min[%d]max[%d]", i, location[1], height/5, height*4/5));
+                            if (!found && imageOffset <= height*4/5 && imageOffset > height/5) {
+                                if (imageView.getController().getAnimatable() != null) {
+                                    if (imageView.getController().getAnimatable().isRunning() == false) {
+                                        imageView.getController().getAnimatable().start();
+                                    }
+                                }
+                                //found = true;
+                            } else {
+                                if (imageView.getController().getAnimatable() != null) {
+                                    imageView.getController().getAnimatable().stop();
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
             }
         });
 
@@ -225,8 +255,9 @@ public class JokePage extends Fragment implements SwipeRefreshLayout.OnRefreshLi
         return String.format("%d-index", _categoryId);
     }
 
-    public String getReadMaxKey() {
-        return String.format("%d-max-pos", _categoryId);
+    public String getOffsetKey() {
+        SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        return String.format("%d-%s-offset-pos", _categoryId, df.format(new Date()));
     }
 
     public String getReadMinKey() {
@@ -267,8 +298,7 @@ public class JokePage extends Fragment implements SwipeRefreshLayout.OnRefreshLi
         Log.e("jokepage", "stop");
         SharedPreferences sp = getContext().getSharedPreferences(_configFileName, Context.MODE_PRIVATE);
         sp.edit().putInt(getUpdateIndexKey(), _curUpdateIndex).commit();
-        sp.edit().putInt(getReadMaxKey(), _curMaxTid).commit();
-        sp.edit().putInt(getReadMinKey(), _curMinTid).commit();
+        sp.edit().putInt(getOffsetKey(), _curOffset).commit();
         super.onStop();
     }
 
@@ -276,7 +306,7 @@ public class JokePage extends Fragment implements SwipeRefreshLayout.OnRefreshLi
         new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    _robotApi.getJokeList(-1, Util.getImei(), _categoryId, _curMaxTid, _curMinTid, 10, _handler);
+                    _robotApi.getJokeList(-1, Util.getImei(), _categoryId, _curOffset, 10, _handler);
                 }
             }, 365
         );

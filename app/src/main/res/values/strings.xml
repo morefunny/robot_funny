@@ -9,6 +9,6 @@
 
     <string name="text_cache">text_cache</string>
 
-    <string name="category_type_static">static</string>
+    <string name="category_type_home">home</string>
     <string name="category_type_gif">gif</string>
 </resources>

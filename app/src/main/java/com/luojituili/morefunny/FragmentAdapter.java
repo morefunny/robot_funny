@@ -31,6 +31,7 @@ public class FragmentAdapter extends FragmentPagerAdapter {
         for (int i = 0; i< data.size(); i++) {
             RCategory cat = data.get(i);
             Log.e("categoryId", String.format("%d", cat.GetCategoryId()));
+
             JokePage jokePage = new JokePage();
             jokePage.setCategoryId(cat.GetCategoryId());
             jokePage.setCategoryName(cat.GetCategoryName());
